@@ -78,7 +78,9 @@ Category: #{category}
           args << Email.server_settings[:authentication] 
         end
 
-        Net::SMTP.start(*args) do |smtp|
+        smtp = Net::SMTP.new(Email.server_settings[:address], Email.server_settings[:port])
+        smtp.enable_starttls_auto if Email.server_settings[:enable_starttls_auto] and smtp.respond_to?(:enable_starttls_auto)
+        smtp.start(*args) do |smtp|
           smtp.send_message mail, Email.message_settings[:from], self.email
         end
       end
